@@ -30,6 +30,19 @@ let settings = {
 
 let dropArray, canvas, ctx;
 
+let mouse = {
+	isDown: false,
+	coords: { x: 0, y: 0 },
+	processMousedown: function processMousedown(e) {
+		mouse.isDown = true;
+		mouse.coords.x = e.clientX;
+		mouse.coords.y = e.clientY;
+	},
+	processMouseup: function processMouseup(e) {
+		mouse.isDown = false;
+	}
+}
+
 class rainDrop {
 	constructor() {
 		this.length = (Math.random() * (settings.raindropLengthRange.max - settings.raindropLengthRange.min)) + settings.raindropLengthRange.min;
@@ -76,7 +89,7 @@ let animate = function animate() {
 
 	// Background.
 	ctx.beginPath();
-	ctx.rect(0,0,document.body.clientWidth, document.body.clientHeight);
+	ctx.rect(0, 0, document.body.clientWidth, document.body.clientHeight);
 	ctx.fillStyle = settings.backgroundStyle;
 	ctx.fill();
 
@@ -89,19 +102,25 @@ let animate = function animate() {
 	window.requestAnimationFrame(animate);
 }
 
-let setWindowHeight = function setWindowHeight(){
-    var windowHeight = window.innerHeight;
-    document.body.style.height = windowHeight + "px";
+let setWindowHeight = function setWindowHeight() {
+	var windowHeight = window.innerHeight;
+	document.body.style.height = windowHeight + 'px';
 }
+
 
 let init = function init() {
 
 	setWindowHeight();
-	window.addEventListener("resize",setWindowHeight,false);
+	window.addEventListener('resize', setWindowHeight, false);
+
+
 
 	canvas = document.getElementById('weather');
 	canvas.width = document.body.clientWidth;
 	canvas.height = document.body.clientHeight;
+
+	canvas.addEventListener('mousedown', mouse.processMousedown, false);
+	canvas.addEventListener('mouseup', mouse.processMouseup, false);
 
 	ctx = canvas.getContext('2d');
 	dropArray = [];
