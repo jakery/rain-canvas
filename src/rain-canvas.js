@@ -1,5 +1,7 @@
 'use strict';
 
+let dropArray, canvas, ctx;
+
 let settings = {
 	// Number of raindrops on the screen. 100 = light rain. 5000 = torrential downpour.
 	// Default: 500
@@ -27,8 +29,6 @@ let settings = {
 	// Default: true
 	gradual: true
 }
-
-let dropArray, canvas, ctx;
 
 let mouse = {
 	isDown: false,
@@ -67,7 +67,6 @@ class rainDrop {
 			x: this.initPosition.x,
 			y: this.initPosition.y
 		};
-
 	}
 
 	draw() {
@@ -85,7 +84,7 @@ class rainDrop {
 	}
 }
 
-let animate = function animate() {
+let loop = function loop() {
 	if (settings.gradual && dropArray.length < settings.raindropCount) {
 		dropArray.push(new rainDrop());
 	}
@@ -108,7 +107,7 @@ let animate = function animate() {
 		dropArray[i].draw();
 	}
 	ctx.stroke();
-	window.requestAnimationFrame(animate);
+	window.requestAnimationFrame(loop);
 }
 
 let setWindowHeight = function setWindowHeight() {
@@ -147,7 +146,7 @@ let init = function init() {
 			}
 		}
 	}
-	window.requestAnimationFrame(animate);
+	window.requestAnimationFrame(loop);
 }
 
 init();
