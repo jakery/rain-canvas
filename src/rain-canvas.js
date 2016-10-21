@@ -40,11 +40,15 @@ let mouse = {
 	},
 	processMouseup: function processMouseup(e) {
 		mouse.isDown = false;
+	},
+	processMousemove: function processMousemove(e) {
+		mouse.coords.x = e.clientX;
+		mosue.coords.y = e.clientY;
 	}
 }
 
 class rainDrop {
-	constructor() {
+	constructor(coords = { x: false, y: false }) {
 		this.length = (Math.random() * (settings.raindropLengthRange.max - settings.raindropLengthRange.min)) + settings.raindropLengthRange.min;
 		this.moveXLength = this.length / 3;
 		this.moveYLength = this.length / 2;
@@ -55,8 +59,8 @@ class rainDrop {
 		this.startAboveScreenOffset = 100;
 
 		this.initPosition = {
-			x: (Math.random() * this.randomStartRange) - this.randomStartOffset,
-			y: (0 - this.length) - this.startAboveScreenOffset
+			x: coords.x || (Math.random() * this.randomStartRange) - this.randomStartOffset,
+			y: coords.y || (0 - this.length) - this.startAboveScreenOffset
 		}
 
 		this.startPosition = {
@@ -85,6 +89,11 @@ let animate = function animate() {
 	if (settings.gradual && dropArray.length < settings.raindropCount) {
 		dropArray.push(new rainDrop());
 	}
+
+	if (mouse.isDown) {
+		dropArray.push(new rainDrop(mouse.coords))
+	}
+
 	ctx.clearRect(0, 0, document.body.clientWidth, document.body.clientHeight);
 
 	// Background.
@@ -121,6 +130,7 @@ let init = function init() {
 
 	canvas.addEventListener('mousedown', mouse.processMousedown, false);
 	canvas.addEventListener('mouseup', mouse.processMouseup, false);
+	canvas.addEventListener('mousemove', mouse.processMousemove, false);
 
 	ctx = canvas.getContext('2d');
 	dropArray = [];
