@@ -1,5 +1,7 @@
 'use strict';
 
+let counter = 0;
+
 let settings = {
 	// Number of raindrops on the screen. 100 = light rain. 5000 = torrential downpour.
 	// Default: 500
@@ -108,6 +110,7 @@ let animate = function animate() {
 		dropArray[i].draw();
 	}
 	ctx.stroke();
+	counter++;
 	window.requestAnimationFrame(animate);
 }
 
