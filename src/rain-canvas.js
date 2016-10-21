@@ -2,12 +2,19 @@
 
 let settings = {
 	// Number of raindrops on the screen. 100 = light rain. 5000 = torrential downpour.
+	// Default: 500
 	raindropCount: 500,
 
-	// Style of the raindrops. Default:  "rgb(0, 127, 255)"   (Solid, lightish blue)
-	raindropStyle: "rgb(0,127,255)",
+	// Style of the background.
+	// Default: 'rgb(0,0,0)' (Solid black)
+	backgroundStyle: 'rgb(0,0,0)',
 
-	// Minimum and  length of raindrop line, in pixels. Default: { min: 30,  max: 30}
+	// Style of the raindrops.
+	// Default: 'rgb(0, 127, 255)' (Solid, lightish blue)
+	raindropStyle: 'rgb(0,127,255)',
+
+	// Minimum and  length of raindrop line, in pixels.
+	// Default: { min: 30,  max: 60}
 	raindropLengthRange: {
 		min: 30,
 		max: 60
@@ -15,13 +22,11 @@ let settings = {
 
 	// If true, the number of raindrops falling builds over time.
 	// (One new drop per animation frame until max is reached)
-	// Note: If set to false and "raindropCount" is high, there
-	// will be a delay of a few seconds while the raindrop array populates.
+	// Note: If set to false and 'raindropCount' is high, there
+	// will be a delay while the raindrop array populates.
+	// Default: true
 	gradual: true
 }
-
-// jQuery used for awaiting DOM-ready state.
-let $j = jQuery;
 
 let dropArray, canvas, ctx;
 
@@ -57,8 +62,6 @@ class rainDrop {
 		this.startPosition.x += this.moveXLength;
 		this.startPosition.y += this.moveYLength;
 		if (this.startPosition.y > document.body.clientHeight && this.startPosition.x > document.body.clientWidth) {
-
-
 			this.startPosition.x = this.initPosition.x;
 			this.startPosition.y = this.initPosition.y;
 		}
@@ -66,13 +69,18 @@ class rainDrop {
 }
 
 let animate = function animate() {
-
 	if (settings.gradual && dropArray.length < settings.raindropCount) {
 		dropArray.push(new rainDrop());
 	}
 	ctx.clearRect(0, 0, document.body.clientWidth, document.body.clientHeight);
-	ctx.beginPath();
 
+	// Background.
+	ctx.beginPath();
+	ctx.rect(0,0,document.body.clientWidth, document.body.clientHeight);
+	ctx.fillStyle = settings.backgroundStyle;
+	ctx.fill();
+
+	ctx.beginPath();
 	for (let i = 0; i < dropArray.length; i++) {
 		dropArray[i].update();
 		dropArray[i].draw();
@@ -81,13 +89,21 @@ let animate = function animate() {
 	window.requestAnimationFrame(animate);
 }
 
-$j(function init() {
+let setWindowHeight = function setWindowHeight(){
+    var windowHeight = window.innerHeight;
+    document.body.style.height = windowHeight + "px";
+}
 
-	canvas = document.getElementById("weather");
+let init = function init() {
+
+	setWindowHeight();
+	window.addEventListener("resize",setWindowHeight,false);
+
+	canvas = document.getElementById('weather');
 	canvas.width = document.body.clientWidth;
 	canvas.height = document.body.clientHeight;
 
-	ctx = canvas.getContext("2d");
+	ctx = canvas.getContext('2d');
 	dropArray = [];
 
 	ctx.lineWidth = 1;
@@ -103,4 +119,6 @@ $j(function init() {
 		}
 	}
 	window.requestAnimationFrame(animate);
-});
+}
+
+init();
